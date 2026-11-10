@@ -1,0 +1,1918 @@
+ <!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>คำนวณเงินเดือน บำเหน็จ บำนาญ ข้าราชการตำรวจชั้นประทวน</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface2: #f7f8fc;
+      --text: #111827;
+      --muted: rgba(17, 24, 39, 0.65);
+      --border: rgba(17, 24, 39, 0.10);
+
+      --accent: #5b5ce2;
+      --accent2: #22a2ff;
+      --danger: #ff4d7d;
+
+      --shadow: 0 18px 45px rgba(17, 24, 39, 0.08);
+      --shadow2: 0 10px 25px rgba(17, 24, 39, 0.08);
+      --radius: 16px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans Thai", "Noto Sans", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(900px 600px at 14% 6%, rgba(91, 92, 226, 0.18), transparent 55%),
+        radial-gradient(700px 520px at 92% 10%, rgba(34, 162, 255, 0.14), transparent 55%),
+        radial-gradient(900px 650px at 60% 96%, rgba(255, 124, 62, 0.10), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 16px 56px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 740px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card .card-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.02), rgba(17, 24, 39, 0));
+    }
+
+    .card .card-body {
+      padding: 16px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .help,
+    .subtitle {
+      display: none;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.88);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform 0.04s ease, background 0.2s ease, border-color 0.2s ease;
+      user-select: none;
+      box-shadow: var(--shadow2);
+    }
+
+    .btn:hover {
+      background: #ffffff;
+      border-color: rgba(17, 24, 39, 0.16);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(91, 92, 226, 1), rgba(34, 162, 255, 1));
+      border-color: rgba(91, 92, 226, 0.40);
+      color: #fff;
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, rgba(255, 77, 125, 1), rgba(255, 129, 168, 1));
+      border-color: rgba(255, 77, 125, 0.45);
+      color: #fff;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: rgba(17, 24, 39, 0.70);
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.03);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(91, 92, 226, 0.45);
+      box-shadow: 0 0 0 4px rgba(91, 92, 226, 0.12);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .help {
+      margin-top: 6px;
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .alert {
+      border: 1px solid rgba(255, 77, 125, 0.45);
+      background: rgba(255, 77, 125, 0.10);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: rgba(17, 24, 39, 0.92);
+      font-size: 13px;
+      line-height: 1.4;
+      display: none;
+      margin-top: 10px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat {
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--shadow2);
+    }
+
+    .stat .k {
+      font-size: 12px;
+      color: rgba(17, 24, 39, 0.72);
+      margin-bottom: 6px;
+    }
+
+    .stat .v {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .stat .s {
+      margin-top: 6px;
+      font-size: 12px;
+      color: rgba(17, 24, 39, 0.62);
+      line-height: 1.45;
+    }
+
+    .stat:nth-child(1) {
+      border: none;
+      background: linear-gradient(135deg, #5b5ce2, #8c5bff);
+      color: rgba(255,255,255,0.96);
+    }
+
+    .stat:nth-child(2) {
+      border: none;
+      background: linear-gradient(135deg, #22a2ff, #41d3ff);
+      color: rgba(255,255,255,0.96);
+    }
+
+    .stat:nth-child(3) {
+      border: none;
+      background: linear-gradient(135deg, #ff7c3e, #ffb14a);
+      color: rgba(255,255,255,0.96);
+    }
+
+    .stat:nth-child(1) .k,
+    .stat:nth-child(2) .k,
+    .stat:nth-child(3) .k {
+      color: rgba(255,255,255,0.88);
+    }
+
+    .stat:nth-child(1) .s,
+    .stat:nth-child(2) .s,
+    .stat:nth-child(3) .s {
+      color: rgba(255,255,255,0.86);
+    }
+
+    .hr {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      z-index: 50;
+    }
+
+    .modal .dialog {
+      width: min(920px, 100%);
+      max-height: min(720px, 92vh);
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .dialog-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.85);
+    }
+
+    .dialog-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .dialog-body {
+      padding: 16px;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .pill {
+      display: inline-block;
+      border: 1px solid rgba(91, 92, 226, 0.22);
+      color: rgba(17, 24, 39, 0.86);
+      background: rgba(91, 92, 226, 0.10);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .table th, .table td {
+      text-align: left;
+      font-size: 12px;
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+    }
+
+    .table th {
+      color: rgba(17, 24, 39, 0.72);
+      font-weight: 700;
+      background: rgba(17, 24, 39, 0.03);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table td[colspan] {
+      color: rgba(17, 24, 39, 0.55) !important;
+    }
+
+    @media print {
+      :root { color-scheme: light; }
+      body { background: #ffffff !important; }
+      .container { max-width: none; padding: 0; }
+      header button, .actions, #openTable, #modal { display: none !important; }
+      .grid { grid-template-columns: 1fr !important; }
+      .card { box-shadow: none !important; }
+      .card .card-header { background: #ffffff !important; }
+      .pill { display: none !important; }
+      input, select, textarea { border: 1px solid rgba(17, 24, 39, 0.18) !important; background: #ffffff !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>คำนวณเงินเดือน บำเหน็จ บำนาญ ข้าราชการตำรวจชั้นประทวน</h1>
+        <div class="subtitle">
+          ปรับ “ตารางเงินเดือนแท่ง ป.1/ป.2/ป.3” ได้เองในเมนูตาราง ก่อนคำนวณระบบจะจำลองรายเดือนจนถึงอายุที่ต้องการ/อายุ 60 และคำนวณเงินเดือนเฉลี่ย 60 เดือนสุดท้ายเพื่อหาบำเหน็จและบำนาญ
+        </div>
+      </div>
+      <div>
+        <button id="openTable" class="btn">ตารางเงินเดือน</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">ข้อมูลสำหรับคำนวณ</h2>
+          <span class="pill" id="tableStatus">ตาราง: พร้อม</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div>
+              <label for="dob">วันเดือนปีเกิด</label>
+              <div class="row" style="grid-template-columns: 0.7fr 0.7fr 1.6fr; margin-bottom: 0;">
+                <div>
+                  <input id="dobD" inputmode="numeric" placeholder="วัน" />
+                </div>
+                <div>
+                  <input id="dobM" inputmode="numeric" placeholder="เดือน" />
+                </div>
+                <div>
+                  <input id="dobY" inputmode="numeric" placeholder="ปี (พ.ศ.)" />
+                </div>
+              </div>
+              <div class="help">ใช้คำนวณวันที่ครบอายุ 60 ปี</div>
+            </div>
+            <div>
+              <label for="appointDate">วันเดือนปีบรรจุราชการ</label>
+              <div class="row" style="grid-template-columns: 0.7fr 0.7fr 1.6fr; margin-bottom: 0;">
+                <div>
+                  <input id="appointD" inputmode="numeric" placeholder="วัน" />
+                </div>
+                <div>
+                  <input id="appointM" inputmode="numeric" placeholder="เดือน" />
+                </div>
+                <div>
+                  <input id="appointY" inputmode="numeric" placeholder="ปี (พ.ศ.)" />
+                </div>
+              </div>
+              <div class="help">ใช้คำนวณอายุราชการ (นับถึงวันครบอายุ 60)</div>
+            </div>
+          </div>
+
+          <div class="row" style="display:none;">
+            <div>
+              <label>กติกาเพิ่มขั้นเงินเดือน</label>
+              <input value="1 เม.ย. +0.5 ขั้น และ 1 ต.ค. +1 ขั้น (ปีละ 2 ครั้ง) + ก่อนเกษียณ (30 ก.ย. สุดท้าย) เพิ่มอีก 1 ขั้น" readonly />
+              <div class="help">ยกเลิกการตั้งค่าแบบ 1.5/2 ขั้นต่อปี และใช้กติกานี้แทน</div>
+            </div>
+            <div></div>
+          </div>
+
+          <div id="currentRow">
+            <div class="row">
+              <div>
+                <label for="currentRank">ยศปัจจุบัน</label>
+                <select id="currentRank">
+                  <option value="STT">สิบตำรวจตรี (ป.1)</option>
+                  <option value="STTH">สิบตำรวจโท (ป.1)</option>
+                  <option value="STE">สิบตำรวจเอก (ป.1)</option>
+                  <option value="JST">จ่าสิบตำรวจ (ป.2)</option>
+                  <option value="DT">ดาบตำรวจ (ป.3)</option>
+                  <option value="RTT">ร้อยตำรวจตรี (ส.1)</option>
+                  <option value="RTTH">ร้อยตำรวจโท (ส.1)</option>
+                  <option value="RTE">ร้อยตำรวจเอก (ส.1)</option>
+                </select>
+                <div class="help">ใช้กำหนดแท่งเงินเดือนของ “ข้อมูลปัจจุบัน”</div>
+              </div>
+              <div></div>
+            </div>
+
+            <div class="row">
+              <div>
+                <label for="currentStep">ขั้นเงินเดือนปัจจุบัน</label>
+                <input id="currentStep" type="number" step="0.01" placeholder="เช่น 12.5" />
+                <div class="help">ระบบจะใช้ข้อมูลนี้เป็นฐาน และคำนวณย้อนกลับไปวันบรรจุโดยอัตโนมัติ</div>
+              </div>
+              <div></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="targetAge">อายุที่ต้องการทราบเงินเดือน</label>
+              <input id="targetAge" type="number" min="0" max="60" step="0.1" value="60" />
+              <div class="help">ถ้าใส่ 60 จะได้เงินเดือนเดือนสุดท้ายก่อนเกษียณ</div>
+            </div>
+            <div>
+              <label>วิธีคำนวณขั้น</label>
+              <input value="คำนวณแบบไล่ค่า (Interpolation)" readonly />
+              <div class="help">ระบบใช้วิธีนี้เสมอ</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="trainingYears">เวลา ศึกษาอบรม (ปี)</label>
+              <input id="trainingYears" type="number" min="0" step="0.1" value="0" />
+              <div class="help">เมื่อต้องการนับเวลาอบรมเพิ่มใน “อายุราชการ” สำหรับคำนวณบำเหน็จ/บำนาญ</div>
+            </div>
+            <div>
+              <label for="multiplierYears">วันทวีคูณ (ปี)</label>
+              <input id="multiplierYears" type="number" min="0" step="0.1" value="0" />
+              <div class="help">เมื่อต้องการนับวันทวีคูณเพิ่มใน “อายุราชการ” สำหรับคำนวณบำเหน็จ/บำนาญ</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="calc" class="btn primary">คำนวณ</button>
+            <button id="reset" class="btn danger">รีเซ็ตค่า</button>
+            <button id="downloadExcel" class="btn" disabled>ดาวน์โหลด Excel</button>
+            <button id="exportPdf" class="btn" disabled>ดาวน์โหลด PDF</button>
+          </div>
+
+          <div id="error" class="alert"></div>
+
+          <div class="hr"></div>
+
+          <div class="help">
+            เส้นทางยศ (ตามโจทย์): สิบตำรวจตรี (ป.1) → 2 ปี 8 เดือนเป็น สิบตำรวจโท → 3 ปีเป็น สิบตำรวจเอก → 3 ปีเป็น จ่าสิบตำรวจ (ป.2) → 3 ปีเป็น ดาบตำรวจ (ป.3)
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="card-header">
+          <h2 class="card-title">ผลลัพธ์</h2>
+        </div>
+        <div class="card-body">
+          <div class="stats">
+            <div class="stat">
+              <div class="k">เงินเดือน (อายุเป้าหมาย)</div>
+              <div class="v" id="salaryAtTarget">-</div>
+              <div class="s" id="salaryAtTargetMeta">-</div>
+            </div>
+            <div class="stat">
+              <div class="k">บำเหน็จ = เงินเดือนอายุเป้าหมายเดือนสุดท้าย × อายุราชการ</div>
+              <div class="v" id="gratuity">-</div>
+              <div class="s" id="gratuityMeta">-</div>
+            </div>
+            <div class="stat">
+              <div class="k">บำนาญ = (เงินเดือนอายุเป้าหมายเฉลี่ย 60 เดือนสุดท้าย × อายุราชการ) ÷ 50, เพดาน 70%</div>
+              <div class="v" id="pension">-</div>
+              <div class="s" id="pensionMeta">-</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ช่วงเวลา</th>
+                <th>ยศ/แท่ง</th>
+                <th>ขั้น</th>
+                <th>เงินเดือน</th>
+              </tr>
+            </thead>
+            <tbody id="rankTimeline">
+              <tr>
+                <td colspan="4" style="color: rgba(255,255,255,0.65);">ยังไม่คำนวณ</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="hr"></div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>อายุ</th>
+                <th>เหตุการณ์</th>
+                <th>วันที่</th>
+                <th>เปลี่ยนขั้น</th>
+                <th>ขั้น</th>
+                <th>แท่ง</th>
+                <th>เงินเดือน</th>
+              </tr>
+            </thead>
+            <tbody id="stepEvents">
+              <tr>
+                <td colspan="7" style="color: rgba(255,255,255,0.65);">ยังไม่คำนวณ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+      <div class="dialog-header">
+        <h3 id="dialogTitle" class="dialog-title">ตารางเงินเดือนแท่ง <span class="mono">ป.1 / ป.2 / ป.3 / ส.1</span></h3>
+        <div class="actions" style="margin-top: 0;">
+          <button id="loadDefault" class="btn">โหลดตัวอย่าง</button>
+          <button id="openCsv" class="btn">นำเข้า CSV</button>
+          <button id="saveTable" class="btn primary">บันทึก</button>
+          <button id="closeTable" class="btn">ปิด</button>
+        </div>
+      </div>
+      <div class="dialog-body">
+        <div class="row">
+          <div>
+            <label for="tableJson">แก้ไขข้อมูล (JSON)</label>
+            <textarea id="tableJson" spellcheck="false"></textarea>
+            <div class="help">รูปแบบ: { "P1": {"6.5": 0}, "P2": {...}, "P3": {...}, "S1": {...} }</div>
+          </div>
+          <div>
+            <label>ตัวอย่างโครงสร้าง</label>
+            <textarea class="mono" readonly spellcheck="false" style="min-height: 180px; opacity: 0.95;">{
+  "P1": {
+    "6.5": 15000,
+    "7": 15400,
+    "7.5": 15800
+  },
+  "P2": {
+    "10": 22000,
+    "10.5": 22600
+  },
+  "P3": {
+    "12": 26000,
+    "12.5": 26700
+  },
+  "S1": {
+    "1": 12530,
+    "1.5": 12840
+  }
+}</textarea>
+            <div class="help">หมายเหตุ: ตัวเลขตัวอย่างเพื่อให้หน้าเว็บทำงานได้ กรุณาแทนที่ด้วยตารางจริง</div>
+          </div>
+        </div>
+
+        <div id="csvBox" style="display:none; margin-top: 10px;">
+          <label for="csvText">วางข้อมูล CSV จาก Excel</label>
+          <textarea id="csvText" spellcheck="false" placeholder="ตัวอย่าง:\nP1,6.5,15000\nP2,10,22000\nP3,12,26000\nS1,1,12530"></textarea>
+          <div class="help">รูปแบบต่อบรรทัด: แท่ง, ขั้น, เงินเดือน (รองรับ P1/P2/P3/S1 หรือ ป.1/ป.2/ป.3/ส.1)</div>
+          <div class="actions">
+            <button id="importCsv" class="btn primary">แปลง CSV เป็นตาราง</button>
+            <button id="closeCsv" class="btn">ปิดส่วน CSV</button>
+          </div>
+        </div>
+
+        <div id="tableError" class="alert"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'police_salary_table_v1';
+
+    const RANKS = {
+      STT: { name: 'สิบตำรวจตรี', scale: 'P1' },
+      STTH: { name: 'สิบตำรวจโท', scale: 'P1' },
+      STE: { name: 'สิบตำรวจเอก', scale: 'P1' },
+      JST: { name: 'จ่าสิบตำรวจ', scale: 'P2' },
+      DT: { name: 'ดาบตำรวจ', scale: 'P3' },
+      RTT: { name: 'ร้อยตำรวจตรี', scale: 'S1' },
+      RTTH: { name: 'ร้อยตำรวจโท', scale: 'S1' },
+      RTE: { name: 'ร้อยตำรวจเอก', scale: 'S1' },
+    };
+
+    function defaultTable() {
+      return {
+        P1: {
+          '27.5': 21480,
+          '27': 21160,
+          '26.5': 20840,
+          '26': 20510,
+          '25.5': 20180,
+          '25': 19850,
+          '24.5': 19520,
+          '24': 19260,
+          '23.5': 19020,
+          '23': 18770,
+          '22.5': 18530,
+          '22': 18270,
+          '21.5': 18020,
+          '21': 17790,
+          '20.5': 17540,
+          '20': 17290,
+          '19.5': 17050,
+          '19': 16790,
+          '18.5': 16540,
+          '18': 16290,
+          '17.5': 16040,
+          '17': 15800,
+          '16.5': 15540,
+          '16': 15290,
+          '15.5': 15060,
+          '15': 14810,
+          '14.5': 14560,
+          '14': 14320,
+          '13.5': 14060,
+          '13': 13820,
+          '12.5': 13570,
+          '12': 13310,
+          '11.5': 13070,
+          '11': 12810,
+          '10.5': 12560,
+          '10': 12330,
+          '9.5': 12090,
+          '9': 11860,
+          '8.5': 11630,
+          '8': 11400,
+          '7.5': 11180,
+          '7': 10970,
+          '6.5': 10760,
+          '6': 10540,
+          '5.5': 10280,
+          '5': 10070,
+          '4.5': 9910,
+          '4': 9710,
+          '3.5': 9520,
+          '3': 9330,
+          '2.5': 9150,
+          '2': 8970,
+          '1.5': 8800,
+          '1': 8610,
+        },
+        P2: {
+          '27.5': 29690,
+          '27': 29240,
+          '26.5': 28790,
+          '26': 28340,
+          '25.5': 27890,
+          '25': 27440,
+          '24.5': 26990,
+          '24': 26630,
+          '23.5': 26270,
+          '23': 25890,
+          '22.5': 25530,
+          '22': 25160,
+          '21.5': 24800,
+          '21': 24440,
+          '20.5': 24070,
+          '20': 23700,
+          '19.5': 23400,
+          '19': 23090,
+          '18.5': 22790,
+          '18': 22490,
+          '17.5': 22180,
+          '17': 21880,
+          '16.5': 21550,
+          '16': 21250,
+          '15.5': 20950,
+          '15': 20640,
+          '14.5': 20330,
+          '14': 20030,
+          '13.5': 19720,
+          '13': 19420,
+          '12.5': 19100,
+          '12': 18790,
+          '11.5': 18480,
+          '11': 18190,
+          '10.5': 17880,
+          '10': 17570,
+          '9.5': 17270,
+          '9': 16930,
+          '8.5': 16650,
+          '8': 16340,
+          '7.5': 15540,
+          '7': 15290,
+          '6.5': 15060,
+          '6': 14810,
+          '5.5': 14560,
+          '5': 14320,
+          '4.5': 14060,
+          '4': 13820,
+          '3.5': 13570,
+          '3': 13310,
+          '2.5': 13070,
+          '2': 12810,
+          '1.5': 12560,
+          '1': 12330,
+        },
+        P3: {
+          '41': 33500,
+          '40.5': 33000,
+          '40': 32500,
+          '39.5': 32000,
+          '39': 31500,
+          '38.5': 31000,
+          '38': 30500,
+          '37.5': 30000,
+          '37': 29500,
+          '36.5': 29000,
+          '36': 28500,
+          '35.5': 28000,
+          '35': 27500,
+          '34.5': 27000,
+          '34': 26500,
+          '33.5': 26000,
+          '33': 25500,
+          '32.5': 25000,
+          '32': 24500,
+          '31.5': 24000,
+          '31': 23500,
+          '30.5': 23000,
+          '30': 22500,
+          '29.5': 22000,
+          '29': 21500,
+          '28.5': 21000,
+          '28': 20500,
+          '27.5': 20000,
+          '27': 19500,
+          '26.5': 19000,
+          '26': 18500,
+          '25.5': 18000,
+          '25': 17500,
+          '24.5': 17000,
+          '24': 16500,
+          '23.5': 16000,
+          '23': 15500,
+          '22.5': 15000,
+          '22': 14500,
+          '21.5': 14000,
+          '21': 13500,
+          '20.5': 13000,
+          '20': 12500,
+          '19.5': 12000,
+          '19': 11500,
+          '18.5': 11000,
+          '18': 10500,
+          '17.5': 10000,
+          '17': 9500,
+          '16.5': 9000,
+          '16': 8500,
+          '15.5': 8000,
+          '15': 7500,
+          '14.5': 7000,
+          '14': 6500,
+          '13.5': 6000,
+          '13': 5500,
+          '12.5': 5000,
+          '12': 4500,
+          '11.5': 4000,
+          '11': 3500,
+          '10.5': 3000,
+          '10': 2500,
+        },
+        S1: {
+          '43.5': 54820,
+          '43': 53950,
+          '42.5': 53080,
+          '42': 52260,
+          '41.5': 51450,
+          '41': 50650,
+          '40.5': 49830,
+          '40': 49010,
+          '39.5': 48200,
+          '39': 47380,
+          '38.5': 46560,
+          '38': 45750,
+          '37.5': 44930,
+          '37': 44130,
+          '36.5': 43300,
+          '36': 42620,
+          '35.5': 41930,
+          '35': 41250,
+          '34.5': 40560,
+          '34': 39880,
+          '33.5': 39190,
+          '33': 38750,
+          '32.5': 38170,
+          '32': 37580,
+          '31.5': 36990,
+          '31': 36400,
+          '30.5': 35810,
+          '30': 35220,
+          '29.5': 34680,
+          '29': 34110,
+          '28.5': 33560,
+          '28': 33000,
+          '27.5': 32450,
+          '27': 31880,
+          '26.5': 31340,
+          '26': 30790,
+          '25.5': 30220,
+          '25': 29680,
+          '24.5': 29110,
+          '24': 28880,
+          '23.5': 28430,
+          '23': 27960,
+          '22.5': 27490,
+          '22': 26990,
+          '21.5': 26630,
+          '21': 26270,
+          '20.5': 25890,
+          '20': 25530,
+          '19.5': 25160,
+          '19': 24800,
+          '18.5': 24440,
+          '18': 24070,
+          '17.5': 23700,
+          '17': 23340,
+          '16.5': 22980,
+          '16': 22600,
+          '15.5': 22230,
+          '15': 21880,
+          '14.5': 21500,
+          '14': 21140,
+          '13.5': 20770,
+          '13': 20400,
+          '12.5': 20040,
+          '12': 19660,
+          '11.5': 19300,
+          '11': 18950,
+          '10.5': 18590,
+          '10': 18230,
+          '9.5': 17890,
+          '9': 17550,
+          '8.5': 17200,
+          '8': 16880,
+          '7.5': 16550,
+          '7': 16240,
+          '6.5': 15920,
+          '6': 15610,
+          '5.5': 15290,
+          '5': 15000,
+          '4.5': 14680,
+          '4': 14380,
+          '3.5': 14070,
+          '3': 13770,
+          '2.5': 13470,
+          '2': 13160,
+          '1.5': 12840,
+          '1': 12530,
+        },
+      };
+    }
+
+    function parseDateBE(dStr, mStr, yBeStr) {
+      const d = Number((dStr || '').trim());
+      const m = Number((mStr || '').trim());
+      const yBe = Number((yBeStr || '').trim());
+      if (!Number.isFinite(d) || !Number.isFinite(m) || !Number.isFinite(yBe)) return null;
+      if (d <= 0 || d > 31) return null;
+      if (m <= 0 || m > 12) return null;
+      const y = yBe - 543;
+      if (!Number.isFinite(y) || y < 1900 || y > 3000) return null;
+      const dt = new Date(Date.UTC(y, m - 1, d));
+      if (Number.isNaN(dt.getTime())) return null;
+      return new Date(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate());
+    }
+
+    function addMonths(date, months) {
+      const d = new Date(date);
+      const whole = Math.trunc(months);
+      const frac = months - whole;
+
+      d.setMonth(d.getMonth() + whole);
+
+      if (Math.abs(frac) > 1e-9) {
+        const days = Math.round(frac * 30);
+        d.setDate(d.getDate() + days);
+      }
+      return d;
+    }
+
+    function addYears(date, years) {
+      const d = new Date(date);
+      d.setFullYear(d.getFullYear() + years);
+      return d;
+    }
+
+    function addDays(date, days) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    function startOfDay(d) {
+      const x = new Date(d);
+      x.setHours(0, 0, 0, 0);
+      return x;
+    }
+
+    function maxDate(a, b) {
+      return a.getTime() >= b.getTime() ? a : b;
+    }
+
+    function getRetirementDate(dob) {
+      const y60 = dob.getFullYear() + 60;
+      const birthMonth = dob.getMonth() + 1;
+      const birthDay = dob.getDate();
+      const afterOct1 = birthMonth > 10 || (birthMonth === 10 && birthDay > 1);
+      const retireYear = afterOct1 ? (y60 + 1) : y60;
+      return new Date(retireYear, 8, 30);
+    }
+
+    function diffInMonths(a, b) {
+      const start = new Date(a);
+      const end = new Date(b);
+      let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+      const anchor = new Date(start);
+      anchor.setMonth(anchor.getMonth() + months);
+      if (end < anchor) months -= 1;
+      return months;
+    }
+
+    function diffInYearsExact(a, b) {
+      const start = new Date(a);
+      const end = new Date(b);
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const days = (end.getTime() - start.getTime()) / msPerDay;
+      return days / 365.25;
+    }
+
+    function formatMoney(n) {
+      if (n == null || Number.isNaN(n)) return '-';
+      return n.toLocaleString('th-TH', { maximumFractionDigits: 0 });
+    }
+
+    function formatMoney2(n) {
+      if (n == null || Number.isNaN(n)) return '-';
+      return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatDateBE(d) {
+      const day = d.getDate();
+      const month = d.getMonth() + 1;
+      const yearBE = d.getFullYear() + 543;
+      const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      return `${day} ${monthNames[month - 1]} ${yearBE}`;
+    }
+
+    function formatScaleDisplay(scale) {
+      if (scale === 'P1') return 'ป.1';
+      if (scale === 'P2') return 'ป.2';
+      if (scale === 'P3') return 'ป.3';
+      if (scale === 'S1') return 'ส.1';
+      return scale || '-';
+    }
+
+    function formatStepDisplay(step) {
+      if (step == null || Number.isNaN(step)) return '-';
+      return Number(step).toFixed(1);
+    }
+
+    function clamp(x, min, max) {
+      return Math.min(max, Math.max(min, x));
+    }
+
+    function getRankAt(dob, appointDate, currentDate, opts) {
+      const forcedRankKey = opts && opts.forcedRankKey;
+      const forcedFromDate = opts && opts.forcedFromDate;
+
+      const age = (dob instanceof Date && currentDate instanceof Date) ? diffInYearsExact(dob, currentDate) : null;
+
+      if (forcedRankKey && forcedFromDate instanceof Date && currentDate instanceof Date) {
+        if (currentDate.getTime() >= forcedFromDate.getTime()) {
+          const forced = RANKS[forcedRankKey];
+          if (forced && forced.scale === 'S1') {
+            if (Number.isFinite(age) && age >= 53) {
+              if (age < 56) return RANKS.RTT;
+              if (age < 59) return RANKS.RTTH;
+              return RANKS.RTE;
+            }
+            return forced;
+          }
+        }
+      }
+
+      if (Number.isFinite(age) && age >= 53) {
+        if (age < 56) return RANKS.RTT;
+        if (age < 59) return RANKS.RTTH;
+        return RANKS.RTE;
+      }
+
+      const m = diffInMonths(appointDate, currentDate);
+      if (m < 0) return RANKS.STT;
+      if (m < 32) return RANKS.STT;
+      if (m < 32 + 36) return RANKS.STTH;
+      if (m < 32 + 36 + 36) return RANKS.STE;
+      if (m < 32 + 36 + 36 + 36) return RANKS.JST;
+      return RANKS.DT;
+    }
+
+    function getTimeline(appointDate) {
+      const t0 = new Date(appointDate);
+      const t1 = addMonths(t0, 32);
+      const t2 = addYears(t1, 3);
+      const t3 = addYears(t2, 3);
+      const t4 = addYears(t3, 3);
+      return [
+        { date: t0, rank: RANKS.STT },
+        { date: t1, rank: RANKS.STTH },
+        { date: t2, rank: RANKS.STE },
+        { date: t3, rank: RANKS.JST },
+        { date: t4, rank: RANKS.DT },
+      ];
+    }
+
+    function normalizeTable(table) {
+      const out = {};
+      for (const scale of ['P1', 'P2', 'P3']) {
+        const obj = table?.[scale];
+        if (!obj || typeof obj !== 'object') throw new Error('ตารางต้องมี ' + scale);
+        const entries = Object.entries(obj)
+          .map(([k, v]) => [Number(k), Number(v)])
+          .filter(([k, v]) => Number.isFinite(k) && Number.isFinite(v));
+
+        if (entries.length < 2) throw new Error('ตาราง ' + scale + ' ต้องมีอย่างน้อย 2 ขั้นเพื่อให้คำนวณได้');
+
+        entries.sort((a, b) => a[0] - b[0]);
+        out[scale] = entries;
+      }
+
+      const s1 = table?.S1;
+      if (s1 && typeof s1 === 'object') {
+        const entries = Object.entries(s1)
+          .map(([k, v]) => [Number(k), Number(v)])
+          .filter(([k, v]) => Number.isFinite(k) && Number.isFinite(v));
+        if (entries.length >= 2) {
+          entries.sort((a, b) => a[0] - b[0]);
+          out.S1 = entries;
+        }
+      }
+      return out;
+    }
+
+    function normalizeScaleToken(token) {
+      const t = (token || '').toString().trim();
+      if (!t) return null;
+      const upper = t.toUpperCase();
+      if (upper === 'P1' || upper === 'P.1' || upper === 'P-1') return 'P1';
+      if (upper === 'P2' || upper === 'P.2' || upper === 'P-2') return 'P2';
+      if (upper === 'P3' || upper === 'P.3' || upper === 'P-3') return 'P3';
+      if (upper === 'S1' || upper === 'S.1' || upper === 'S-1') return 'S1';
+      if (t === 'ป.1' || t === 'ป1') return 'P1';
+      if (t === 'ป.2' || t === 'ป2') return 'P2';
+      if (t === 'ป.3' || t === 'ป3') return 'P3';
+      if (t === 'ส.1' || t === 'ส1') return 'S1';
+      return null;
+    }
+
+    function parseCsvToTable(csvText) {
+      const lines = (csvText || '')
+        .split(/\r?\n/)
+        .map((x) => x.trim())
+        .filter(Boolean);
+
+      const table = { P1: {}, P2: {}, P3: {}, S1: {} };
+      for (const line of lines) {
+        const parts = line.split(/\s*,\s*|\s*;\s*|\s*\t\s*/).filter(Boolean);
+        if (parts.length < 3) continue;
+        const scale = normalizeScaleToken(parts[0]);
+        const step = Number(parts[1]);
+        const salary = Number(String(parts[2]).replace(/,/g, ''));
+        if (!scale || !Number.isFinite(step) || !Number.isFinite(salary)) continue;
+        table[scale][String(step)] = salary;
+      }
+      return table;
+    }
+
+    function capStepForScale(scale, step) {
+      if (!Number.isFinite(step)) return step;
+      if (scale === 'S1') return Math.min(step, 43.5);
+      return Math.min(step, 41);
+    }
+
+    function capStep(step) {
+      if (!Number.isFinite(step)) return step;
+      return Math.min(step, 41);
+    }
+
+    function roundToNearestHalf(step) {
+      if (!Number.isFinite(step)) return step;
+      return Math.round(step * 2) / 2;
+    }
+
+    function stepForSalary(normalizedScaleEntries, salary) {
+      const entries = normalizedScaleEntries;
+      if (!Number.isFinite(salary)) return null;
+
+      let best = null;
+      let bestD = Infinity;
+      for (let i = 0; i < entries.length - 1; i++) {
+        const [s0, v0] = entries[i];
+        const [s1, v1] = entries[i + 1];
+        const min = Math.min(v0, v1);
+        const max = Math.max(v0, v1);
+        if (salary >= min && salary <= max) {
+          if (Math.abs(v1 - v0) < 1e-9) return s0;
+          const t = (salary - v0) / (v1 - v0);
+          return roundToNearestHalf(s0 + t * (s1 - s0));
+        }
+        const d0 = Math.abs(v0 - salary);
+        if (d0 < bestD) { bestD = d0; best = s0; }
+        const d1 = Math.abs(v1 - salary);
+        if (d1 < bestD) { bestD = d1; best = s1; }
+      }
+      return roundToNearestHalf(best);
+    }
+
+    function salaryForStep(normalizedScaleEntries, step, roundingMode) {
+      const entries = normalizedScaleEntries;
+      const minStep = entries[0][0];
+      const maxStep = entries[entries.length - 1][0];
+      const s = clamp(step, minStep, maxStep);
+
+      if (roundingMode === 'floor') {
+        const candidates = entries.filter(([k]) => k <= s);
+        return candidates.length ? candidates[candidates.length - 1][1] : entries[0][1];
+      }
+      if (roundingMode === 'ceil') {
+        const candidates = entries.filter(([k]) => k >= s);
+        return candidates.length ? candidates[0][1] : entries[entries.length - 1][1];
+      }
+      if (roundingMode === 'nearest') {
+        let best = entries[0];
+        let bestD = Math.abs(entries[0][0] - s);
+        for (const e of entries) {
+          const d = Math.abs(e[0] - s);
+          if (d < bestD) {
+            bestD = d;
+            best = e;
+          }
+        }
+        return best[1];
+      }
+
+      for (let i = 0; i < entries.length - 1; i++) {
+        const [s0, v0] = entries[i];
+        const [s1, v1] = entries[i + 1];
+        if (s >= s0 && s <= s1) {
+          if (Math.abs(s1 - s0) < 1e-9) return v0;
+          const t = (s - s0) / (s1 - s0);
+          return v0 + t * (v1 - v0);
+        }
+      }
+      return entries[entries.length - 1][1];
+    }
+
+    function stepOffsetByScaleChange(appointDate, date) {
+      const [{ date: t0 }, { date: t1 }, { date: t2 }, { date: t3 }, { date: t4 }] = getTimeline(appointDate);
+      void t0; void t1; void t2;
+      if (!(date instanceof Date)) return 0;
+      if (date.getTime() < t3.getTime()) return 0;
+      if (date.getTime() < t4.getTime()) return 8;
+      return 10;
+    }
+
+    function simulate({ dob, appointDate, startStep, roundingMode, tableNorm, serviceYearsOverride, forcedRankKey, forcedFromDate }) {
+      const retirementDate = getRetirementDate(dob);
+
+      const baseServiceYears = Math.max(0, diffInYearsExact(appointDate, retirementDate));
+      const serviceYears = Number.isFinite(serviceYearsOverride)
+        ? clamp(serviceYearsOverride, 0, 35)
+        : Math.min(35, baseServiceYears);
+      const serviceMonths = Math.max(0, diffInMonths(appointDate, retirementDate));
+
+      const lastPoint = salaryAtDate({ dob, appointDate, date: retirementDate, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate });
+
+      return {
+        retirementDate,
+        serviceMonths,
+        serviceYears,
+        lastSalary: lastPoint.salary,
+        lastStep: lastPoint.step,
+        lastRank: lastPoint.rank,
+      };
+    }
+
+    function getStepIncreaseEvents(appointDate, endDate) {
+      if (!(appointDate instanceof Date) || !(endDate instanceof Date)) return [];
+      if (endDate.getTime() < appointDate.getTime()) return [];
+
+      const startY = appointDate.getFullYear();
+      const endY = endDate.getFullYear();
+      const events = [];
+
+      let lastSep30BeforeEnd = new Date(endDate.getFullYear(), 8, 30);
+      if (lastSep30BeforeEnd.getTime() > endDate.getTime()) {
+        lastSep30BeforeEnd = new Date(endDate.getFullYear() - 1, 8, 30);
+      }
+
+      for (let y = startY; y <= endY; y++) {
+        const apr1 = new Date(y, 3, 1);
+        const oct1 = new Date(y, 9, 1);
+        const sep30 = new Date(y, 8, 30);
+
+        if (apr1.getTime() >= appointDate.getTime() && apr1.getTime() <= endDate.getTime()) {
+          events.push({ date: apr1, inc: 0.5, kind: 'APR', label: 'ปรับขั้น 1 เม.ย.', prio: 1 });
+        }
+        if (oct1.getTime() >= appointDate.getTime() && oct1.getTime() <= endDate.getTime()) {
+          events.push({ date: oct1, inc: 1, kind: 'OCT', label: 'ปรับขั้น 1 ต.ค.', prio: 1 });
+        }
+
+        if (sep30.getTime() >= appointDate.getTime() && sep30.getTime() <= endDate.getTime()) {
+          if (sep30.getTime() === lastSep30BeforeEnd.getTime()) {
+            events.push({ date: sep30, inc: 1, kind: 'SEP30_RETIRE', label: 'ปรับขั้นก่อนเกษียณ 30 ก.ย. (เพิ่ม 1 ขั้น)', prio: 2 });
+          }
+        }
+      }
+
+      events.sort((a, b) => (a.date.getTime() - b.date.getTime()) || ((a.prio ?? 9) - (b.prio ?? 9)));
+      return events;
+    }
+
+    function getScaleChangeEvents(appointDate, endDate) {
+      if (!(appointDate instanceof Date) || !(endDate instanceof Date)) return [];
+      if (endDate.getTime() < appointDate.getTime()) return [];
+
+      const timeline = getTimeline(appointDate);
+      const events = [
+        { date: timeline[3].date, kind: 'SCALE_P1_P2', label: 'ปรับแท่ง ป.1 → ป.2', prio: 0 },
+        { date: timeline[4].date, kind: 'SCALE_P2_P3', label: 'ปรับแท่ง ป.2 → ป.3', prio: 0 },
+      ];
+
+      return events
+        .filter((e) => e.date.getTime() >= appointDate.getTime() && e.date.getTime() <= endDate.getTime())
+        .sort((a, b) => (a.date.getTime() - b.date.getTime()) || ((a.prio ?? 9) - (b.prio ?? 9)));
+    }
+
+    function getAllEventsForDisplay(appointDate, endDate) {
+      const stepEvents = getStepIncreaseEvents(appointDate, endDate);
+      const scaleEvents = getScaleChangeEvents(appointDate, endDate);
+      const all = [...scaleEvents, ...stepEvents];
+      all.sort((a, b) => (a.date.getTime() - b.date.getTime()) || ((a.prio ?? 9) - (b.prio ?? 9)));
+      return all;
+    }
+
+    function stepIncreaseTotal(appointDate, date) {
+      return getStepIncreaseEvents(appointDate, date).reduce((sum, e) => sum + e.inc, 0);
+    }
+
+    function salaryAtDate({ dob, appointDate, date, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate }) {
+      const months = diffInMonths(appointDate, date);
+      if (months < 0) return { date, salary: null, step: null, rank: null, months };
+      const rank = getRankAt(dob, appointDate, date, { forcedRankKey, forcedFromDate });
+      const offset = stepOffsetByScaleChange(appointDate, date);
+      const inc = stepIncreaseTotal(appointDate, date);
+      const baseStep = roundToNearestHalf(startStep + inc - offset);
+      const step = capStepForScale(rank.scale, rank.scale === 'S1' ? (baseStep + 2.5) : baseStep);
+      const salary = (rank.scale === 'S1' && !tableNorm.S1)
+        ? salaryForStep(tableNorm.P3, step - 2.5, roundingMode)
+        : salaryForStep(tableNorm[rank.scale], step, roundingMode);
+      return { date, salary, step, rank, months };
+    }
+
+    function salaryAtAge({ appointDate, dob, targetAge, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate }) {
+      const isRetireAge = Math.abs(Number(targetAge) - 60) < 1e-9;
+      const targetDate = isRetireAge ? getRetirementDate(dob) : addYears(dob, targetAge);
+      const months = diffInMonths(appointDate, targetDate);
+      if (months < 0) return { date: targetDate, salary: null, step: null, rank: null, months };
+      const rank = getRankAt(dob, appointDate, targetDate, { forcedRankKey, forcedFromDate });
+      const offset = stepOffsetByScaleChange(appointDate, targetDate);
+      const inc = stepIncreaseTotal(appointDate, targetDate);
+      const baseStep = roundToNearestHalf(startStep + inc - offset);
+      const step = capStepForScale(rank.scale, rank.scale === 'S1' ? (baseStep + 2.5) : baseStep);
+      const salary = (rank.scale === 'S1' && !tableNorm.S1)
+        ? salaryForStep(tableNorm.P3, step - 2.5, roundingMode)
+        : salaryForStep(tableNorm[rank.scale], step, roundingMode);
+      return { date: targetDate, salary, step, rank, months };
+    }
+
+    function readSalaryTableFromStorage() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      try {
+        const obj = JSON.parse(raw);
+        return obj;
+      } catch {
+        return null;
+      }
+    }
+
+    function isCompatibleSalaryTable(table) {
+      try {
+        if (!table || typeof table !== 'object') return false;
+        const p3 = table.P3;
+        if (!p3 || typeof p3 !== 'object') return false;
+        const hasStep41 = Object.prototype.hasOwnProperty.call(p3, '41') || Object.prototype.hasOwnProperty.call(p3, 41);
+        if (!hasStep41) return false;
+
+        const norm = normalizeTable(table);
+        const p3Max = norm.P3[norm.P3.length - 1][0];
+        if (p3Max < 41) return false;
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function getSalaryTableOrMigrate() {
+      const stored = readSalaryTableFromStorage();
+      if (!stored) return null;
+      if (isCompatibleSalaryTable(stored)) {
+        if (!stored.S1 || typeof stored.S1 !== 'object') {
+          const merged = { ...stored, S1: defaultTable().S1 };
+          saveSalaryTableToStorage(merged);
+          return merged;
+        }
+        return stored;
+      }
+      const fresh = defaultTable();
+      saveSalaryTableToStorage(fresh);
+      return fresh;
+    }
+
+    function saveSalaryTableToStorage(obj) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+      fetch('/api/salary-table', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table_data: obj })
+      }).catch((err) => console.warn('บันทึกตารางเงินเดือนขึ้นระบบกลางไม่สำเร็จ', err));
+    }
+
+    const el = (id) => document.getElementById(id);
+
+    const ui = {
+      dobD: el('dobD'),
+      dobM: el('dobM'),
+      dobY: el('dobY'),
+      appointD: el('appointD'),
+      appointM: el('appointM'),
+      appointY: el('appointY'),
+      stepEvents: el('stepEvents'),
+      targetAge: el('targetAge'),
+      trainingYears: el('trainingYears'),
+      multiplierYears: el('multiplierYears'),
+      currentRow: el('currentRow'),
+      currentRank: el('currentRank'),
+      currentStep: el('currentStep'),
+      calc: el('calc'),
+      reset: el('reset'),
+      downloadExcel: el('downloadExcel'),
+      exportPdf: el('exportPdf'),
+      error: el('error'),
+      tableStatus: el('tableStatus'),
+
+      salaryAtTarget: el('salaryAtTarget'),
+      salaryAtTargetMeta: el('salaryAtTargetMeta'),
+      gratuity: el('gratuity'),
+      gratuityMeta: el('gratuityMeta'),
+      pension: el('pension'),
+      pensionMeta: el('pensionMeta'),
+      rankTimeline: el('rankTimeline'),
+
+      modal: el('modal'),
+      openTable: el('openTable'),
+      closeTable: el('closeTable'),
+      saveTable: el('saveTable'),
+      loadDefault: el('loadDefault'),
+      tableJson: el('tableJson'),
+      tableError: el('tableError'),
+      openCsv: el('openCsv'),
+      csvBox: el('csvBox'),
+      csvText: el('csvText'),
+      importCsv: el('importCsv'),
+      closeCsv: el('closeCsv'),
+    };
+
+    let lastExportContext = null;
+
+    function escapeXml(s) {
+      return String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&apos;');
+    }
+
+    function tableToMatrix(tableEl) {
+      const headers = Array.from(tableEl.querySelectorAll('thead th')).map((th) => th.textContent.trim());
+      const rows = Array.from(tableEl.querySelectorAll('tbody tr')).map((tr) =>
+        Array.from(tr.querySelectorAll('td')).map((td) => td.textContent.trim())
+      );
+      return [headers, ...rows];
+    }
+
+    function matrixToSpreadsheetMLWorksheet(name, matrix) {
+      const safeName = escapeXml(name).slice(0, 31);
+      const rowsXml = matrix
+        .map((row) => {
+          const cells = row
+            .map((cell) => {
+              const v = cell == null ? '' : String(cell);
+              return `<Cell><Data ss:Type="String">${escapeXml(v)}</Data></Cell>`;
+            })
+            .join('');
+          return `<Row>${cells}</Row>`;
+        })
+        .join('');
+
+      return `<Worksheet ss:Name="${safeName}"><Table>${rowsXml}</Table></Worksheet>`;
+    }
+
+    function buildSpreadsheetML(workbookName, sheets) {
+      const xmlHeader = `<?xml version="1.0"?>`;
+      const workbookOpen = `
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">`;
+      const props = `
+  <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+    <Title>${escapeXml(workbookName)}</Title>
+  </DocumentProperties>`;
+      const sheetXml = sheets.map((s) => matrixToSpreadsheetMLWorksheet(s.name, s.matrix)).join('');
+      const workbookClose = `</Workbook>`;
+      return xmlHeader + workbookOpen + props + sheetXml + workbookClose;
+    }
+
+    function downloadTextFile({ filename, mime, text }) {
+      const blob = new Blob([text], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function setError(msg) {
+      ui.error.textContent = msg;
+      ui.error.style.display = msg ? 'block' : 'none';
+    }
+
+    function setTableError(msg) {
+      ui.tableError.textContent = msg;
+      ui.tableError.style.display = msg ? 'block' : 'none';
+    }
+
+    function openModal() {
+      ui.modal.style.display = 'flex';
+      ui.modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      ui.modal.style.display = 'none';
+      ui.modal.setAttribute('aria-hidden', 'true');
+      setTableError('');
+    }
+
+    function updateTableStatus(ok) {
+      ui.tableStatus.textContent = ok ? 'ตาราง: พร้อม' : 'ตาราง: ต้องแก้ไข';
+      ui.tableStatus.style.borderColor = ok ? 'rgba(167, 243, 208, 0.35)' : 'rgba(251, 113, 133, 0.35)';
+      ui.tableStatus.style.background = ok ? 'rgba(167, 243, 208, 0.12)' : 'rgba(251, 113, 133, 0.10)';
+    }
+
+    function renderTimeline(dob, appointDate, startStep, roundingMode, tableNorm, displayStartDate, forcedRankKey, forcedFromDate) {
+      const t = getTimeline(appointDate);
+      const rows = [];
+
+      if (displayStartDate instanceof Date) {
+        const nowPoint = salaryAtDate({ dob, appointDate, date: displayStartDate, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate });
+        if (nowPoint.rank && nowPoint.step != null) {
+          rows.push(
+            `<tr>` +
+              `<td>ณ ปัจจุบัน (${formatDateBE(displayStartDate)})</td>` +
+              `<td>${nowPoint.rank.name} / ${formatScaleDisplay(nowPoint.rank.scale)}</td>` +
+              `<td>${formatStepDisplay(nowPoint.step)}</td>` +
+              `<td>${nowPoint.salary != null ? formatMoney(nowPoint.salary) + ' บาท' : '-'}</td>` +
+            `</tr>`
+          );
+        }
+      }
+
+      for (let i = 0; i < t.length; i++) {
+        const item = t[i];
+        if (displayStartDate instanceof Date && item.date.getTime() < displayStartDate.getTime()) continue;
+        const p = salaryAtDate({ dob, appointDate, date: item.date, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate });
+        rows.push(
+          `<tr>` +
+            `<td>${formatDateBE(item.date)}</td>` +
+            `<td>${p.rank?.name || item.rank.name} / ${formatScaleDisplay(p.rank?.scale || item.rank.scale)}</td>` +
+            `<td>${formatStepDisplay(p.step)}</td>` +
+            `<td>${p.salary != null ? formatMoney(p.salary) + ' บาท' : '-'}</td>` +
+          `</tr>`
+        );
+      }
+      ui.rankTimeline.innerHTML = rows.length
+        ? rows.join('')
+        : '<tr><td colspan="4" style="color: rgba(255,255,255,0.65);">ไม่มีข้อมูลปัจจุบัน/อนาคตในช่วงที่เลือก</td></tr>';
+    }
+
+    function renderStepEvents(dob, appointDate, startStep, endDate, roundingMode, tableNorm, displayStartDate, forcedRankKey, forcedFromDate) {
+      const events = getAllEventsForDisplay(appointDate, endDate)
+        .filter((e) => !(displayStartDate instanceof Date) || e.date.getTime() >= displayStartDate.getTime());
+
+      if (!events.length) {
+        ui.stepEvents.innerHTML = '<tr><td colspan="7" style="color: rgba(255,255,255,0.65);">ไม่มีการเพิ่มขั้น/ปรับแท่งในช่วงเวลานี้</td></tr>';
+        return;
+      }
+
+      const rows = [];
+      for (const e of events) {
+        const age = diffInYearsExact(dob, e.date);
+        const ageInt = Math.max(0, Math.floor(age));
+
+        let deltaStep = null;
+        if (typeof e.inc === 'number') {
+          deltaStep = e.inc;
+        } else if (e.kind === 'SCALE_P1_P2' || e.kind === 'SCALE_P2_P3') {
+          const before = addDays(e.date, -1);
+          const offsetBefore = stepOffsetByScaleChange(appointDate, before);
+          const offsetAfter = stepOffsetByScaleChange(appointDate, e.date);
+          deltaStep = -(offsetAfter - offsetBefore);
+        }
+
+        const p = salaryAtDate({ dob, appointDate, date: e.date, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate });
+        rows.push(
+          `<tr>` +
+            `<td>${ageInt} ปี</td>` +
+            `<td>${e.label || 'ปรับขั้น'}</td>` +
+            `<td>${formatDateBE(e.date)}</td>` +
+            `<td>${deltaStep == null ? '-' : (deltaStep >= 0 ? '+' : '') + Number(deltaStep).toFixed(1)}</td>` +
+            `<td>${formatStepDisplay(p.step)}</td>` +
+            `<td>${formatScaleDisplay(p.rank?.scale)}</td>` +
+            `<td>${p.salary != null ? formatMoney(p.salary) + ' บาท' : '-'}</td>` +
+          `</tr>`
+        );
+      }
+      ui.stepEvents.innerHTML = rows.join('');
+    }
+
+    function setDateInputsFromDate(d, dEl, mEl, yEl) {
+      dEl.value = String(d.getDate());
+      mEl.value = String(d.getMonth() + 1);
+      yEl.value = String(d.getFullYear() + 543);
+    }
+
+    async function initDefaults() {
+      try {
+        const response = await fetch('/api/salary-table');
+        if (response.ok) {
+          const payload = await response.json();
+          if (payload && payload.table_data && isCompatibleSalaryTable(payload.table_data)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload.table_data));
+          }
+        }
+      } catch (err) {
+        console.warn('ใช้ข้อมูลตารางเงินเดือนที่บันทึกไว้ในเครื่อง เนื่องจากเชื่อมต่อฐานข้อมูลไม่ได้', err);
+      }
+      const now = new Date();
+      const dobDefault = new Date(now.getFullYear() - 30, now.getMonth(), now.getDate());
+      const appointDefault = new Date(now.getFullYear() - 10, now.getMonth(), now.getDate());
+
+      setDateInputsFromDate(dobDefault, ui.dobD, ui.dobM, ui.dobY);
+      setDateInputsFromDate(appointDefault, ui.appointD, ui.appointM, ui.appointY);
+
+      const stored = getSalaryTableOrMigrate();
+      if (!stored) saveSalaryTableToStorage(defaultTable());
+      ui.tableJson.value = JSON.stringify(getSalaryTableOrMigrate() ?? defaultTable(), null, 2);
+
+      updateTableStatus(true);
+    }
+
+    function handleCalc() {
+      setError('');
+
+      const dob = parseDateBE(ui.dobD.value, ui.dobM.value, ui.dobY.value);
+      const appointDate = parseDateBE(ui.appointD.value, ui.appointM.value, ui.appointY.value);
+      const targetAge = Number(ui.targetAge.value);
+      const trainingYears = Number(ui.trainingYears.value);
+      const multiplierYears = Number(ui.multiplierYears.value);
+      const roundingMode = 'interp';
+      let startStep = NaN;
+
+      const today = startOfDay(new Date());
+      const asOf = today;
+
+      if (!dob) return setError('กรุณาใส่วันเดือนปีเกิด');
+      if (!appointDate) return setError('กรุณาใส่วันเดือนปีบรรจุราชการ');
+      if (!Number.isFinite(targetAge) || targetAge < 0 || targetAge > 60) return setError('อายุเป้าหมายต้องอยู่ในช่วง 0-60');
+      if (!Number.isFinite(trainingYears) || trainingYears < 0) return setError('เวลา ศึกษาอบรม ต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป');
+      if (!Number.isFinite(multiplierYears) || multiplierYears < 0) return setError('วันทวีคูณ ต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป');
+
+      const table = readSalaryTableFromStorage() ?? defaultTable();
+      let tableNorm;
+      try {
+        tableNorm = normalizeTable(table);
+        updateTableStatus(true);
+      } catch (e) {
+        updateTableStatus(false);
+        return setError(String(e?.message || e));
+      }
+
+      const retirementDate = getRetirementDate(dob);
+      if (appointDate > retirementDate) return setError('วันบรรจุราชการต้องไม่หลังวันเกษียณ (30 ก.ย.)');
+
+      if (asOf < appointDate) return setError('วันนี้ต้องไม่ก่อนวันบรรจุ');
+      if (asOf > retirementDate) return setError('วันนี้ต้องไม่หลังวันเกษียณ');
+
+      const rankKey = ui.currentRank.value;
+      const rankObj = RANKS[rankKey];
+      if (!rankObj) return setError('ยศปัจจุบันไม่ถูกต้อง');
+
+      const forcedRankKey = rankObj.scale === 'S1' ? rankKey : null;
+      const forcedFromDate = rankObj.scale === 'S1' ? asOf : null;
+
+      if (rankObj.scale !== 'S1') {
+        const implied = getRankAt(dob, appointDate, asOf);
+        if (implied.scale !== rankObj.scale) {
+          return setError(`ยศปัจจุบันไม่สอดคล้องกับเส้นทางยศตามวันบรรจุ ณ วันนี้ (ระบบคาดว่าเป็น ${implied.name} / ${formatScaleDisplay(implied.scale)})`);
+        }
+      }
+
+      let currentStep = Number(ui.currentStep.value);
+      if (!Number.isFinite(currentStep)) return setError('กรุณาใส่ “ขั้นเงินเดือนปัจจุบัน”');
+
+      currentStep = capStepForScale(rankObj.scale, currentStep);
+      const currentBaseStep = rankObj.scale === 'S1' ? (currentStep - 2.5) : currentStep;
+
+      const yearsFromAppointToAsOf = diffInYearsExact(appointDate, asOf);
+      const offsetAsOf = stepOffsetByScaleChange(appointDate, asOf);
+      const incAsOf = stepIncreaseTotal(appointDate, asOf);
+      void yearsFromAppointToAsOf;
+      startStep = capStep(roundToNearestHalf(currentBaseStep - incAsOf + offsetAsOf));
+
+      if (!Number.isFinite(startStep)) return setError('ขั้นเงินเดือนเริ่มต้นไม่ถูกต้อง');
+
+      const atTarget = salaryAtAge({ appointDate, dob, targetAge, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate });
+
+      const baseServiceYearsToTarget = Math.max(0, diffInYearsExact(appointDate, atTarget.date));
+      const extraServiceYears = Math.max(0, trainingYears) + Math.max(0, multiplierYears);
+      const serviceYearsForGratuity = Math.max(0, baseServiceYearsToTarget + extraServiceYears);
+      const serviceYearsForPension = clamp(baseServiceYearsToTarget + extraServiceYears, 0, 35);
+
+      const sim = simulate({
+        dob,
+        appointDate,
+        startStep,
+        roundingMode,
+        tableNorm,
+        serviceYearsOverride: serviceYearsForPension,
+        forcedRankKey,
+        forcedFromDate,
+      });
+
+      const salaries60Target = [];
+      for (let i = 59; i >= 0; i--) {
+        const d = addMonths(atTarget.date, -i);
+        const p = salaryAtDate({ dob, appointDate, date: d, startStep, roundingMode, tableNorm, forcedRankKey, forcedFromDate });
+        if (p.salary != null) salaries60Target.push(p.salary);
+      }
+      const avg60Target = salaries60Target.length
+        ? salaries60Target.reduce((a, b) => a + b, 0) / salaries60Target.length
+        : null;
+
+      ui.salaryAtTarget.textContent = atTarget.salary != null ? formatMoney(atTarget.salary) + ' บาท' : '-';
+      ui.salaryAtTargetMeta.textContent = atTarget.salary != null
+        ? `วันที่ ${formatDateBE(atTarget.date)} • ${atTarget.rank.name} / ${formatScaleDisplay(atTarget.rank.scale)} • ขั้น ${formatStepDisplay(atTarget.step)}`
+        : `อายุเป้าหมายอยู่ก่อนวันบรรจุราชการ`;
+
+      const gratuity = atTarget.salary != null ? atTarget.salary * serviceYearsForGratuity : null;
+      ui.gratuity.textContent = gratuity != null ? formatMoney2(gratuity) + ' บาท' : '-';
+      ui.gratuityMeta.textContent = gratuity != null
+        ? `อายุราชการ ${serviceYearsForGratuity.toFixed(3)} ปี` : '-';
+
+      let pension = null;
+      if (avg60Target != null) {
+        const raw = (avg60Target * serviceYearsForPension) / 50;
+        const cap = atTarget.salary != null ? 0.7 * atTarget.salary : null;
+        pension = cap != null ? Math.min(raw, cap) : raw;
+        ui.pension.textContent = formatMoney2(pension) + ' บาท/เดือน';
+        const capped = cap != null && raw > cap + 1e-9;
+        ui.pensionMeta.textContent = cap != null
+          ? `สูตรได้ ${formatMoney2(raw)} • เพดาน 70% = ${formatMoney2(cap)}${capped ? ' (ถูกจำกัดเพดาน)' : ''}`
+          : `สูตรได้ ${formatMoney2(raw)}`;
+      } else {
+        ui.pension.textContent = '-';
+        ui.pensionMeta.textContent = '-';
+      }
+
+      const displayStartDate = maxDate(
+        startOfDay(appointDate),
+        today
+      );
+
+      renderTimeline(dob, appointDate, startStep, roundingMode, tableNorm, displayStartDate, forcedRankKey, forcedFromDate);
+      renderStepEvents(dob, appointDate, startStep, sim.retirementDate, roundingMode, tableNorm, displayStartDate, forcedRankKey, forcedFromDate);
+
+      lastExportContext = {
+        displayStartDate,
+        retirementDate: sim.retirementDate,
+      };
+      ui.downloadExcel.disabled = false;
+      ui.exportPdf.disabled = false;
+    }
+
+    function handleReset() {
+      ui.targetAge.value = '60';
+      ui.trainingYears.value = '0';
+      ui.multiplierYears.value = '0';
+      ui.currentRank.value = 'STT';
+      ui.currentStep.value = '';
+
+      saveSalaryTableToStorage(defaultTable());
+      ui.tableJson.value = JSON.stringify(readSalaryTableFromStorage(), null, 2);
+      updateTableStatus(true);
+
+      ui.salaryAtTarget.textContent = '-';
+      ui.salaryAtTargetMeta.textContent = '-';
+      ui.gratuity.textContent = '-';
+      ui.gratuityMeta.textContent = '-';
+      ui.pension.textContent = '-';
+      ui.pensionMeta.textContent = '-';
+      ui.rankTimeline.innerHTML = '<tr><td colspan="4" style="color: rgba(255,255,255,0.65);">ยังไม่คำนวณ</td></tr>';
+      ui.stepEvents.innerHTML = '<tr><td colspan="7" style="color: rgba(255,255,255,0.65);">ยังไม่คำนวณ</td></tr>';
+
+      lastExportContext = null;
+      ui.downloadExcel.disabled = true;
+      ui.exportPdf.disabled = true;
+
+      setError('');
+    }
+
+    function handleExportPdf() {
+      if (!lastExportContext) return;
+      window.print();
+    }
+
+    function handleDownloadExcel() {
+      if (!lastExportContext) return;
+
+      const rankTable = ui.rankTimeline.closest('table');
+      const stepTable = ui.stepEvents.closest('table');
+      if (!rankTable || !stepTable) return;
+
+      const matrix1 = tableToMatrix(rankTable);
+      const matrix2 = tableToMatrix(stepTable);
+
+      const baseDate = lastExportContext.displayStartDate instanceof Date ? formatDateBE(lastExportContext.displayStartDate) : 'N/A';
+      const workbookName = `ผลคำนวณเงินเดือน (${baseDate})`;
+      const xml = buildSpreadsheetML(workbookName, [
+        { name: 'Timeline', matrix: matrix1 },
+        { name: 'Events', matrix: matrix2 },
+      ]);
+
+      const dateStamp = new Date().toISOString().slice(0, 10);
+      const filename = `salary_export_${dateStamp}.xls`;
+      downloadTextFile({
+        filename,
+        mime: 'application/vnd.ms-excel;charset=utf-8',
+        text: xml,
+      });
+    }
+
+    function handleImportCsv() {
+      setTableError('');
+      const csv = ui.csvText.value;
+      if (!csv.trim()) return setTableError('กรุณาวาง CSV ก่อน');
+      try {
+        const table = parseCsvToTable(csv);
+        normalizeTable(table);
+        ui.tableJson.value = JSON.stringify(table, null, 2);
+      } catch (e) {
+        return setTableError(String(e?.message || e));
+      }
+      ui.csvBox.style.display = 'none';
+    }
+
+    function handleSaveTable() {
+      setTableError('');
+      let obj;
+      try {
+        obj = JSON.parse(ui.tableJson.value);
+      } catch {
+        return setTableError('JSON ไม่ถูกต้อง');
+      }
+      try {
+        normalizeTable(obj);
+      } catch (e) {
+        return setTableError(String(e?.message || e));
+      }
+      saveSalaryTableToStorage(obj);
+      updateTableStatus(true);
+      closeModal();
+    }
+
+    function handleLoadDefault() {
+      ui.tableJson.value = JSON.stringify(defaultTable(), null, 2);
+      setTableError('');
+    }
+
+    ui.openTable.addEventListener('click', () => {
+      ui.tableJson.value = JSON.stringify(getSalaryTableOrMigrate() ?? defaultTable(), null, 2);
+      openModal();
+    });
+    ui.closeTable.addEventListener('click', closeModal);
+    ui.modal.addEventListener('click', (e) => {
+      if (e.target === ui.modal) closeModal();
+    });
+
+    ui.calc.addEventListener('click', handleCalc);
+    ui.reset.addEventListener('click', handleReset);
+    ui.downloadExcel.addEventListener('click', handleDownloadExcel);
+    ui.exportPdf.addEventListener('click', handleExportPdf);
+    ui.saveTable.addEventListener('click', handleSaveTable);
+    ui.loadDefault.addEventListener('click', handleLoadDefault);
+
+    ui.openCsv.addEventListener('click', () => {
+      ui.csvBox.style.display = ui.csvBox.style.display === 'none' ? 'block' : 'none';
+      setTableError('');
+    });
+    ui.closeCsv.addEventListener('click', () => {
+      ui.csvBox.style.display = 'none';
+      setTableError('');
+    });
+    ui.importCsv.addEventListener('click', handleImportCsv);
+
+    initDefaults();
+  </script>
+</body>
+</html>
