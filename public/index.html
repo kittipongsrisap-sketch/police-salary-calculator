@@ -389,9 +389,64 @@
       .pill { display: none !important; }
       input, select, textarea { border: 1px solid rgba(17, 24, 39, 0.18) !important; background: #ffffff !important; }
     }
+
+    #authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(900px 600px at 15% 5%,rgba(34,70,110,.34),transparent 60%),linear-gradient(145deg,#101b2d,#182b43 55%,#3c1f32);box-sizing:border-box}
+    .auth-card{width:min(440px,100%);background:#fff;border-radius:24px;padding:32px;box-shadow:0 28px 80px rgba(0,0,0,.28);box-sizing:border-box}
+    .auth-mark{width:54px;height:54px;border-radius:17px;background:linear-gradient(145deg,#183b62,#742d45);display:grid;place-items:center;color:white;font-size:25px;margin-bottom:20px}
+    .auth-title{font-size:23px;font-weight:800;margin:0;color:#172338}
+    .auth-subtitle{color:#687386;font-size:13px;line-height:1.7;margin:8px 0 22px}
+    .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f1f3f7;padding:5px;border-radius:12px;margin-bottom:18px}
+    .auth-tab{border:0;border-radius:9px;padding:10px;background:transparent;color:#647084;font-weight:700;cursor:pointer}
+    .auth-tab.active{background:#fff;color:#203b5b;box-shadow:0 2px 8px rgba(20,35,55,.09)}
+    .auth-field{margin:13px 0}
+    .auth-field label{color:#39475b;font-weight:650}
+    .auth-field input{background:#f8f9fb;border-color:#e1e6ed}
+    .auth-submit{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;background:linear-gradient(110deg,#1c4269,#74354b);color:#fff;font-size:14px;font-weight:750;cursor:pointer}
+    .auth-error{display:none;padding:10px 12px;background:#fff0f1;border:1px solid #ffd1d6;border-radius:10px;color:#a42b3d;font-size:13px;margin-top:12px}
+    .auth-note{font-size:11px;color:#8590a0;line-height:1.6;margin-top:18px}
+    .top-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .user-chip{display:flex;align-items:center;gap:10px;font-size:12px;color:#43536a}
+    .user-chip strong{font-size:13px;color:#1c2c42}
+    .history-panel{margin-top:16px;display:none}
+    .history-item{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+    .history-item:last-child{border-bottom:0}
+    .history-item-title{font-size:14px;font-weight:750;color:#1b2b42}
+    .history-item-meta{font-size:12px;color:#738094;margin-top:4px;line-height:1.6}
+    .history-item-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .history-empty{font-size:13px;color:#7b8797;padding:16px 0}
+    @media(max-width:560px){.auth-card{padding:24px 20px}.top-actions{align-items:flex-end;flex-direction:column}.history-item{align-items:flex-start;flex-direction:column}}
   </style>
 </head>
 <body>
+  <section id="authScreen" aria-label="เข้าสู่ระบบ">
+    <div class="auth-card">
+      <div class="auth-mark">฿</div>
+      <h1 class="auth-title">ระบบคำนวณเงินเดือนตำรวจ</h1>
+      <p class="auth-subtitle">เข้าสู่ระบบเพื่อบันทึกข้อมูลการคำนวณและเรียกดูประวัติของคุณได้ทุกอุปกรณ์</p>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="loginTab">เข้าสู่ระบบ</button>
+        <button type="button" class="auth-tab" id="registerTab">สร้างบัญชี</button>
+      </div>
+      <form id="authForm">
+        <div class="auth-field" id="nameField" style="display:none">
+          <label for="authName">ชื่อที่แสดง</label>
+          <input id="authName" autocomplete="name" maxlength="80" placeholder="ชื่อ-นามสกุล" />
+        </div>
+        <div class="auth-field">
+          <label for="authEmail">อีเมล</label>
+          <input id="authEmail" type="email" autocomplete="username" maxlength="254" required placeholder="name@example.com" />
+        </div>
+        <div class="auth-field">
+          <label for="authPassword">รหัสผ่าน</label>
+          <input id="authPassword" type="password" autocomplete="current-password" minlength="10" maxlength="128" required placeholder="อย่างน้อย 10 ตัวอักษร" />
+        </div>
+        <button class="auth-submit" id="authSubmit" type="submit">เข้าสู่ระบบ</button>
+        <div id="authError" class="auth-error" role="alert"></div>
+      </form>
+      <div class="auth-note">ข้อมูลบัญชีและประวัติการคำนวณจะแยกตามผู้ใช้ ไม่สามารถเปิดดูข้อมูลของบัญชีอื่นได้</div>
+    </div>
+  </section>
+  <div id="appShell" style="display:none">
   <div class="container">
     <header>
       <div>
@@ -400,7 +455,8 @@
           ปรับ “ตารางเงินเดือนแท่ง ป.1/ป.2/ป.3” ได้เองในเมนูตาราง ก่อนคำนวณระบบจะจำลองรายเดือนจนถึงอายุที่ต้องการ/อายุ 60 และคำนวณเงินเดือนเฉลี่ย 60 เดือนสุดท้ายเพื่อหาบำเหน็จและบำนาญ
         </div>
       </div>
-      <div>
+      <div class="top-actions">
+        <div class="user-chip"><span>ผู้ใช้งาน</span><strong id="accountName">-</strong><button id="logoutBtn" class="btn" type="button">ออกจากระบบ</button></div>
         <button id="openTable" class="btn">ตารางเงินเดือน</button>
       </div>
     </header>
@@ -514,6 +570,8 @@
             <button id="reset" class="btn danger">รีเซ็ตค่า</button>
             <button id="downloadExcel" class="btn" disabled>ดาวน์โหลด Excel</button>
             <button id="exportPdf" class="btn" disabled>ดาวน์โหลด PDF</button>
+            <button id="saveCalculation" class="btn primary" disabled>บันทึกผลคำนวณ</button>
+            <button id="showHistory" class="btn">ประวัติที่บันทึก</button>
           </div>
 
           <div id="error" class="alert"></div>
@@ -590,6 +648,13 @@
         </div>
       </aside>
     </div>
+    <section id="historyPanel" class="card history-panel">
+      <div class="card-header">
+        <h2 class="card-title">ประวัติการคำนวณของฉัน</h2>
+        <button id="closeHistory" class="btn" type="button">ปิด</button>
+      </div>
+      <div class="card-body" id="historyList"><div class="history-empty">กำลังโหลดประวัติ...</div></div>
+    </section>
   </div>
 
   <div id="modal" class="modal" aria-hidden="true">
@@ -649,6 +714,82 @@
       </div>
     </div>
   </div>
+  </div>
+
+  <script>
+    (function setupAuthentication(){
+      const screen = document.getElementById('authScreen');
+      const shell = document.getElementById('appShell');
+      const form = document.getElementById('authForm');
+      const loginTab = document.getElementById('loginTab');
+      const registerTab = document.getElementById('registerTab');
+      const nameField = document.getElementById('nameField');
+      const submit = document.getElementById('authSubmit');
+      const error = document.getElementById('authError');
+      let mode = 'login';
+
+      function setMode(next){
+        mode = next;
+        loginTab.classList.toggle('active', mode === 'login');
+        registerTab.classList.toggle('active', mode === 'register');
+        nameField.style.display = mode === 'register' ? 'block' : 'none';
+        submit.textContent = mode === 'login' ? 'เข้าสู่ระบบ' : 'สร้างบัญชี';
+        document.getElementById('authPassword').autocomplete = mode === 'login' ? 'current-password' : 'new-password';
+        error.style.display = 'none';
+      }
+      function showAuth(message){
+        shell.style.display = 'none';
+        screen.style.display = 'flex';
+        if(message){ error.textContent = message; error.style.display = 'block'; }
+      }
+      function showApp(user){
+        window.authUser = user;
+        document.getElementById('accountName').textContent = user.display_name;
+        screen.style.display = 'none';
+        shell.style.display = 'block';
+        window.dispatchEvent(new Event('app-authenticated'));
+      }
+      window.apiFetch = (url, options={}) => fetch(url, {...options, credentials:'same-origin'});
+      loginTab.addEventListener('click',()=>setMode('login'));
+      registerTab.addEventListener('click',()=>setMode('register'));
+      form.addEventListener('submit', async event=>{
+        event.preventDefault();
+        error.style.display = 'none';
+        submit.disabled = true;
+        submit.textContent = 'กำลังดำเนินการ...';
+        const payload = {
+          email: document.getElementById('authEmail').value.trim(),
+          password: document.getElementById('authPassword').value
+        };
+        if(mode === 'register') payload.display_name = document.getElementById('authName').value.trim();
+        try{
+          const response = await fetch(mode === 'login' ? '/api/auth/login' : '/api/auth/register',{
+            method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload)
+          });
+          const data = await response.json();
+          if(!response.ok) throw new Error(data.error || 'ไม่สามารถดำเนินการได้');
+          form.reset();
+          showApp(data.user);
+        }catch(err){
+          error.textContent = err.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+          error.style.display = 'block';
+        }finally{
+          submit.disabled = false;
+          submit.textContent = mode === 'login' ? 'เข้าสู่ระบบ' : 'สร้างบัญชี';
+        }
+      });
+      document.getElementById('logoutBtn').addEventListener('click',async()=>{
+        try{ await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'}); }catch(_){}
+        window.authUser = null;
+        showAuth('ออกจากระบบแล้ว');
+      });
+      fetch('/api/auth/me',{credentials:'same-origin'}).then(async response=>{
+        if(!response.ok) throw new Error('not signed in');
+        const data = await response.json();
+        showApp(data.user);
+      }).catch(()=>showAuth());
+    })();
+  </script>
 
   <script>
     const STORAGE_KEY = 'police_salary_table_v1';
@@ -1466,6 +1607,8 @@
       openTable: el('openTable'),
       closeTable: el('closeTable'),
       saveTable: el('saveTable'),
+      saveCalculation: el('saveCalculation'),
+      showHistory: el('showHistory'),
       loadDefault: el('loadDefault'),
       tableJson: el('tableJson'),
       tableError: el('tableError'),
@@ -1477,6 +1620,7 @@
     };
 
     let lastExportContext = null;
+    let lastCalculation = null;
 
     function escapeXml(s) {
       return String(s)
@@ -1678,6 +1822,8 @@
 
     function handleCalc() {
       setError('');
+      lastCalculation = null;
+      ui.saveCalculation.disabled = true;
 
       const dob = parseDateBE(ui.dobD.value, ui.dobM.value, ui.dobY.value);
       const appointDate = parseDateBE(ui.appointD.value, ui.appointM.value, ui.appointY.value);
@@ -1805,6 +1951,21 @@
         displayStartDate,
         retirementDate: sim.retirementDate,
       };
+      lastCalculation = {
+        input_data: {
+          dobD: ui.dobD.value, dobM: ui.dobM.value, dobY: ui.dobY.value,
+          appointD: ui.appointD.value, appointM: ui.appointM.value, appointY: ui.appointY.value,
+          currentRank: ui.currentRank.value, currentStep: ui.currentStep.value,
+          targetAge: ui.targetAge.value, trainingYears: ui.trainingYears.value,
+          multiplierYears: ui.multiplierYears.value
+        },
+        result_data: {
+          salary: ui.salaryAtTarget.textContent, salary_meta: ui.salaryAtTargetMeta.textContent,
+          gratuity: ui.gratuity.textContent, gratuity_meta: ui.gratuityMeta.textContent,
+          pension: ui.pension.textContent, pension_meta: ui.pensionMeta.textContent
+        }
+      };
+      ui.saveCalculation.disabled = false;
       ui.downloadExcel.disabled = false;
       ui.exportPdf.disabled = false;
     }
@@ -1904,6 +2065,87 @@
       }
     }
 
+    async function saveCalculationHistory() {
+      if (!lastCalculation) return;
+      ui.saveCalculation.disabled = true;
+      try {
+        const response = await window.apiFetch('/api/calculations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: 'คำนวณเงินเดือน อายุ ' + lastCalculation.input_data.targetAge + ' ปี',
+            ...lastCalculation
+          })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'บันทึกไม่สำเร็จ');
+        alert('บันทึกผลคำนวณเรียบร้อยแล้ว');
+        await loadCalculationHistory();
+      } catch (error) {
+        alert(error.message || 'บันทึกประวัติไม่สำเร็จ');
+      } finally {
+        ui.saveCalculation.disabled = false;
+      }
+    }
+
+    async function loadCalculationHistory() {
+      const panel = el('historyPanel');
+      const list = el('historyList');
+      panel.style.display = 'block';
+      list.innerHTML = '<div class="history-empty">กำลังโหลดประวัติ...</div>';
+      try {
+        const response = await window.apiFetch('/api/calculations');
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'โหลดประวัติไม่สำเร็จ');
+        list.replaceChildren();
+        if (!data.items.length) {
+          list.innerHTML = '<div class="history-empty">ยังไม่มีประวัติการคำนวณที่บันทึกไว้</div>';
+          return;
+        }
+        for (const item of data.items) {
+          const row = document.createElement('div');
+          row.className = 'history-item';
+          const info = document.createElement('div');
+          const title = document.createElement('div');
+          title.className = 'history-item-title';
+          title.textContent = item.title || 'รายการคำนวณ';
+          const meta = document.createElement('div');
+          meta.className = 'history-item-meta';
+          const date = new Date(item.created_at).toLocaleString('th-TH');
+          meta.textContent = date + ' · เงินเดือน ' + (item.result_data?.salary || '-') + ' · บำนาญ ' + (item.result_data?.pension || '-');
+          info.append(title, meta);
+          const actions = document.createElement('div');
+          actions.className = 'history-item-actions';
+          const restore = document.createElement('button');
+          restore.className = 'btn';
+          restore.textContent = 'นำข้อมูลกลับมาคำนวณ';
+          restore.addEventListener('click', () => {
+            const input = item.input_data || {};
+            for (const key of ['dobD','dobM','dobY','appointD','appointM','appointY','currentRank','currentStep','targetAge','trainingYears','multiplierYears']) {
+              if (input[key] !== undefined && ui[key]) ui[key].value = input[key];
+            }
+            panel.style.display = 'none';
+            handleCalc();
+            window.scrollTo({top:0,behavior:'smooth'});
+          });
+          const remove = document.createElement('button');
+          remove.className = 'btn danger';
+          remove.textContent = 'ลบ';
+          remove.addEventListener('click', async () => {
+            if (!confirm('ต้องการลบประวัติรายการนี้หรือไม่?')) return;
+            const response = await window.apiFetch('/api/calculations/' + encodeURIComponent(item.id), {method:'DELETE'});
+            if (!response.ok) { alert('ลบประวัติไม่สำเร็จ'); return; }
+            await loadCalculationHistory();
+          });
+          actions.append(restore, remove);
+          row.append(info, actions);
+          list.append(row);
+        }
+      } catch (error) {
+        list.textContent = error.message || 'โหลดประวัติไม่สำเร็จ';
+      }
+    }
+
     function handleLoadDefault() {
       ui.tableJson.value = JSON.stringify(defaultTable(), null, 2);
       setTableError('');
@@ -1923,6 +2165,9 @@
     ui.downloadExcel.addEventListener('click', handleDownloadExcel);
     ui.exportPdf.addEventListener('click', handleExportPdf);
     ui.saveTable.addEventListener('click', handleSaveTable);
+    ui.saveCalculation.addEventListener('click', saveCalculationHistory);
+    ui.showHistory.addEventListener('click', loadCalculationHistory);
+    el('closeHistory').addEventListener('click', () => { el('historyPanel').style.display = 'none'; });
     ui.loadDefault.addEventListener('click', handleLoadDefault);
 
     ui.openCsv.addEventListener('click', () => {
@@ -1935,7 +2180,8 @@
     });
     ui.importCsv.addEventListener('click', handleImportCsv);
 
-    initDefaults();
+    window.addEventListener('app-authenticated', () => initDefaults());
   </script>
+</div>
 </body>
 </html>
