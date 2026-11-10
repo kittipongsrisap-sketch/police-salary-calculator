@@ -1,8 +1,8 @@
 {
   "name": "police-salary-calculator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "Police salary, gratuity and pension calculator with Neon PostgreSQL persistence",
+  "description": "Police salary, gratuity and pension calculator with user accounts and Neon PostgreSQL storage",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -11,7 +11,11 @@
     "node": ">=20"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-pg-simple": "^10.0.0",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
     "pg": "^8.13.1"
   }
 }
