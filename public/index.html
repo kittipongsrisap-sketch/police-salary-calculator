@@ -1971,6 +1971,8 @@
     }
 
     function handleReset() {
+      lastCalculation = null;
+      ui.saveCalculation.disabled = true;
       ui.targetAge.value = '60';
       ui.trainingYears.value = '0';
       ui.multiplierYears.value = '0';
