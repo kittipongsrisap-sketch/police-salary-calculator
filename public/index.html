@@ -1406,11 +1406,29 @@
 
     function saveSalaryTableToStorage(obj) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-      fetch('/api/salary-table', {
+    }
+
+    async function saveSalaryTableToServer(obj) {
+      let key = localStorage.getItem('salary_table_admin_key');
+      if (!key) {
+        key = prompt('กรอกรหัสผู้ดูแลเพื่อบันทึกตารางเงินเดือนส่วนกลาง');
+        if (!key) throw new Error('ยกเลิกการบันทึกข้อมูลส่วนกลาง');
+        localStorage.setItem('salary_table_admin_key', key);
+      }
+      const response = await fetch('/api/salary-table', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + key
+        },
         body: JSON.stringify({ table_data: obj })
-      }).catch((err) => console.warn('บันทึกตารางเงินเดือนขึ้นระบบกลางไม่สำเร็จ', err));
+      });
+      if (response.status === 401) {
+        localStorage.removeItem('salary_table_admin_key');
+        throw new Error('รหัสผู้ดูแลไม่ถูกต้อง');
+      }
+      if (!response.ok) throw new Error('บันทึกตารางเงินเดือนส่วนกลางไม่สำเร็จ');
+      return response.json();
     }
 
     const el = (id) => document.getElementById(id);
@@ -1863,7 +1881,7 @@
       ui.csvBox.style.display = 'none';
     }
 
-    function handleSaveTable() {
+    async function handleSaveTable() {
       setTableError('');
       let obj;
       try {
@@ -1877,8 +1895,13 @@
         return setTableError(String(e?.message || e));
       }
       saveSalaryTableToStorage(obj);
-      updateTableStatus(true);
-      closeModal();
+      try {
+        await saveSalaryTableToServer(obj);
+        updateTableStatus(true);
+        closeModal();
+      } catch (e) {
+        setTableError(String(e?.message || e));
+      }
     }
 
     function handleLoadDefault() {
