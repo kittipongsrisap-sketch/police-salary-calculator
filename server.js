@@ -37,6 +37,11 @@ app.get('/api/salary-table', async (_req, res) => {
 });
 
 app.put('/api/salary-table', async (req, res) => {
+  const expectedKey = process.env.ADMIN_WRITE_KEY;
+  const providedKey = (req.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!expectedKey || providedKey !== expectedKey) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   const tableData = req.body && req.body.table_data;
   if (!tableData || typeof tableData !== 'object' || Array.isArray(tableData)) {
     return res.status(400).json({ error: 'รูปแบบตารางเงินเดือนไม่ถูกต้อง' });
