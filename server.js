@@ -242,7 +242,16 @@ app.delete('/api/calculations/:id', requireAuth, async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Always serve the latest login screen instead of a cached pre-authentication page.
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path.endsWith('.html')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+app.use(express.static(path.join(__dirname, 'public'), { etag: false, lastModified: false }));
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 const port = Number(process.env.PORT || 3000);
